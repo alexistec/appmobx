@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import {Provider} from 'mobx-react';
-import TortasStore from './store/TortasStore';
+import PostsStore from './store/PostsStore';
 import Menu  from './Menu';
-
+import './styles/css/bootstrap.min.css';
 
 class App extends Component {
   render() {
     return (
-      <Provider TortasStore={TortasStore}>
+      <Provider PostsStore={PostsStore}>
         <Menu/>
       </Provider>
     );
