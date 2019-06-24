@@ -1,5 +1,6 @@
 import React from "react";
 import {inject,observer} from 'mobx-react';
+import {Modal,Button} from 'react-bootstrap';
 
 class Menu extends React.Component{
     
@@ -10,8 +11,12 @@ class Menu extends React.Component{
             titulo:'',
             description:'',
             iduser:'',
-            usuario:''
+            usuario:'',
+            listPostUser:[]
         }
+
+        this.listPost = this.listPost.bind(this);
+        this.closeModal = this.closeModal.bind(this);
     }
 
     handleChange(e){
@@ -21,31 +26,47 @@ class Menu extends React.Component{
     publicarPosts =()=>{
         //const {PostsStore} = this.props;
         
-        this.props.PostsStore.publicarPost({
-            idpost:10,
-            titulo:this.state.titulo,
-            image : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiA0G6DOZ9Gb6OtdQ9MelKrododBLGgfU2zxdqouD10RlFlX4n',
-            description : this.state.description,
-            iduser     : this.state.iduser,
-            created   :'Test user'
-        });
-        /*this.props.PostsStore.publicarPosts({
-            idpost:10,
-            titulo:this.state.titulo,
-            image : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiA0G6DOZ9Gb6OtdQ9MelKrododBLGgfU2zxdqouD10RlFlX4n',
-            description : this.state.description,
-            iduser     : this.state.iduser,
-            created   :'Test user'
-        })*/
+        if(this.state.iduser !=0){
+            this.props.PostsStore.publicarPost({
+                idpost:10,
+                titulo:this.state.titulo,
+                image : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiA0G6DOZ9Gb6OtdQ9MelKrododBLGgfU2zxdqouD10RlFlX4n',
+                description : this.state.description,
+                iduser     : this.state.iduser,
+                created   :this.state.usuario
+            });
+        }else{
+            alert("Debes seleccionar un user");
+        }
     }
 
     selectUser(event){
+        
         const idusuario = event.target.value;
         if(idusuario !== 0){
             this.setState({
-                iduser : idusuario
+                iduser : idusuario,
+                usuario:event.target.options[event.target.selectedIndex].text
             })
         }
+    }
+
+
+    listPost =(idusuario,user)=>{
+        this.setState({
+            showModal:true,
+            usuario:user
+        });
+        //add post
+        this.setState({
+            listPostUser:this.props.PostsStore.getPostUser(idusuario)
+        })
+        
+    }
+    closeModal(){
+        this.setState({
+            showModal:false
+        })
     }
     
     render(){
@@ -60,15 +81,13 @@ class Menu extends React.Component{
                                 <option value="0">Elegir author</option>
                                 {
                                     this.props.PostsStore.users.map((usuario,item)=>
-                                    <option key={item+1} value={usuario.id}>{usuario.users}</option>
+                                    <option key={item+1}  data-id={usuario.users} value={usuario.id}>{usuario.users}</option>
                                 )}
                             </select><br/>
                             <input type="text" name="titulo" className="form-control" placeholder="Titulo" 
                             onChange={this.handleChange.bind(this)} value={this.state.titulo} /><br/>
                             <textarea className="form-control" rows="3" placeholder="post" name="description" onChange={this.handleChange.bind(this)}></textarea><br/>
-                            <button type="button" onClick={()=>this.publicarPosts()} 
-                            
-                            className="btn btn-primary btn-lg btn-block">Publicar</button>
+                            <button type="button" onClick={()=>this.publicarPosts()} className="btn btn-primary btn-lg btn-block">Publicar</button>
                         </form>
                     </div>
                     <div className="col-md-6" style={{marginTop:10}}>
@@ -83,13 +102,26 @@ class Menu extends React.Component{
                                     <div className="media-body">
                                         <h4 className="media-heading">{post.titulo}</h4>
                                         <p>{post.description}</p>
-                                        <span>Created : <strong>{post.created}</strong></span>
+                                        <span>Created : <a href="#" onClick={()=>this.listPost(post.iduser,post.created)}><strong>{post.created}</strong></a></span>
                                     </div>
                                 </div>
                             </div> 
                         )}
                     </div>
                 </div>
+                <Modal show={this.state.showModal} onHide={this.closeModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Post user {this.state.usuario}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                       {this.state.listPostUser.map((post,item)=>
+                            <div key={item+1}>
+                                <h4>{post.titulo}</h4>
+                                <p>{post.description}</p>
+                            </div>
+                        )}
+                    </Modal.Body>    
+                </Modal>
             </div>
         )
     }

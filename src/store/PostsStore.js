@@ -21,11 +21,18 @@ class PostsStore {
     publicarPost = (posts)=>{
         this.posts.push(posts);
     }
+
+    getPostUser(iduser){
+        return( 
+            this.posts.filter(post => post.iduser === iduser)
+        )
+    } 
 }
 
 decorate(PostsStore,{
     posts:observable,
-    publicarPost:action
+    publicarPost:action,
+    getPostUser :action
 })
 
 const postsStore = new PostsStore();
