@@ -60,7 +60,7 @@ class Menu extends React.Component{
                                 <option value="0">Elegir author</option>
                                 {
                                     this.props.PostsStore.users.map((usuario,item)=>
-                                    <option value={usuario.id}>{usuario.users}</option>
+                                    <option key={item+1} value={usuario.id}>{usuario.users}</option>
                                 )}
                             </select><br/>
                             <input type="text" name="titulo" className="form-control" placeholder="Titulo" 
@@ -68,7 +68,7 @@ class Menu extends React.Component{
                             <textarea className="form-control" rows="3" placeholder="post" name="description" onChange={this.handleChange.bind(this)}></textarea><br/>
                             <button type="button" onClick={()=>this.publicarPosts()} 
                             
-                            class="btn btn-primary btn-lg btn-block">Publicar</button>
+                            className="btn btn-primary btn-lg btn-block">Publicar</button>
                         </form>
                     </div>
                     <div className="col-md-6" style={{marginTop:10}}>
